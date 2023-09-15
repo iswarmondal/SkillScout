@@ -1,0 +1,66 @@
+Explanation:
+- For the first question, the candidate's answer shows a lack of knowledge about
+React, so the communication skill and correctness of the answer are both 33%.
+- For the second question, the candidate's answer shows some understanding of
+virtual DOM in React, so the communication skill and correctness of the answer
+are both 67%.
+- For the third question, the candidate's answer is incorrect and shows a lack
+of understanding of the difference between virtual DOM and actual DOM, so the
+communication skill and correctness of the answer are both 0%.
+
+
+
+This is the template analysis result that you will give us in JSON array output for each questions.Please give accurate result not random values
+    
+    '''
+    [
+      {
+        "communication_skill_of_the_candidate": "[value determined from overall questions answered]%",
+        "correctness_of_the_answer": "[value determined from overall questions answered]%"
+    },
+    ... All other questions
+  ]
+
+
+  {
+  "interview_analysis": [
+    {
+      "question": "What is react?",
+      "answer": "React was a PHP based language.",
+      "communication_skill_of_the_candidate": 40,
+      "correctness_of_the_answer": 0
+    },
+    {
+      "question": "What is virtual DOM in react?",
+      "answer": "Virtual DOM been has a node list which react play to determine the update in UI",
+      "communication_skill_of_the_candidate": 60,
+      "correctness_of_the_answer": 50
+    },
+    {
+      "question": "What is the difference of virtual DOM and actual DOM?",
+      "answer": "There is no difference between virtual DOM and actual DOM. Both are rendered simultaneously",
+      "communication_skill_of_the_candidate": 70,
+      "correctness_of_the_answer": 0
+    }
+  ]
+}
+
+
+{
+  "communication_skill_of_the_candidate": "60%",
+  "correctness_of_the_answer": "33%",
+  "interview_analysis": [
+    {
+      "communication_skill_of_the_candidate": "60%",
+      "correctness_of_the_answer": "0%"
+    },
+    {
+      "communication_skill_of_the_candidate": "60%",
+      "correctness_of_the_answer": "33%"
+    },
+    {
+      "communication_skill_of_the_candidate": "60%",
+      "correctness_of_the_answer": "0%"
+    }
+  ]
+}
