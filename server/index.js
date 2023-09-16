@@ -1,9 +1,47 @@
 const express = require("express");
 const { Configuration, OpenAIApi } = require("openai");
 require("dotenv").config();
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const convertapi = require('convertapi')("pNF9OwSHfJVIILhe");
 
 const app = express();
 app.use(express.json());
+
+// Ensure the "temp_files" folder exists; create it if not
+const tempFilesFolderPath = path.join(__dirname, 'temp_files');
+if (!fs.existsSync(tempFilesFolderPath)) {
+  fs.mkdirSync(tempFilesFolderPath);
+}
+
+// Configure multer to save files to the "temp_files" folder
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, 'temp_files'));
+  },
+  filename: (req, file, cb) => {
+    // Generate a unique filename by adding a timestamp
+    const timestamp = Date.now();
+    const filename = `${timestamp}-${file.originalname}`;
+    cb(null, filename);
+  },
+});
+
+const upload = multer({ storage });
+
+// Function to extract text using ConvertAPI
+async function extractTextFromPDF(pdfFilePath) {
+  try {
+    const result = await convertapi.convert('txt', { File: pdfFilePath }, 'pdf');
+    const tempTextFilePath = path.join(__dirname, 'temp_files', 'extracted_text.txt');
+    await result.saveFiles(tempTextFilePath);
+    const extractedText = require('fs').readFileSync(tempTextFilePath, 'utf-8');
+    return extractedText;
+  } catch (error) {
+    throw error;
+  }
+}
 
 const configuration = new Configuration({
   apiKey: process.env.API_KEY,
@@ -41,6 +79,24 @@ app.post("/generate-response", async (req, res) => {
   } catch (error) {
     console.error("Error:", error.message);
     res.status(500).json({ error: error });
+  }
+});
+
+// Define the "/file" endpoint for file upload
+app.post('/file', upload.single('file'), async (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No file uploaded.');
+  }
+
+  const { filename } = req.file;
+  const pdfFilePath = path.join(__dirname, 'temp_files', filename);
+
+  try {
+    const extractedText = await extractTextFromPDF(pdfFilePath);
+    res.status(200).json({ filename, extractedText }); // Send the text in the JSON response
+  } catch (error) {
+    console.error('Error extracting text:', error);
+    res.status(500).send('Error extracting text from the file.');
   }
 });
 
