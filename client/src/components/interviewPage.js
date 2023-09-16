@@ -1,7 +1,11 @@
 import React from 'react';
+import { useRef } from 'react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
 const InterviewPage = () => {
+    let questionJson = JSON.parse(sessionStorage.getItem('questionJson'));
+    let questionCount = useRef()
+    console.log(questionJson);
     const {
         transcript,
         listening,
@@ -13,7 +17,6 @@ const InterviewPage = () => {
         return <span>Browser doesn't support speech recognition.</span>;
     }
 
-
     const startButton = (e) => {
         // document.getElementById('mic-image').src = "./assets/mic-slash.gif";
         if (listening) {
@@ -21,6 +24,10 @@ const InterviewPage = () => {
         } else {
             SpeechRecognition.startListening({ continuous: true, language: 'en-IN' })
         }
+    }
+
+    const handleNextClick = () => {
+
     }
 
 
@@ -34,13 +41,16 @@ const InterviewPage = () => {
                     <img id='mic-image' src={listening ? "./assets/mic-animate.gif" : "./assets/mic.gif"} alt='mic-logo' />
                 </div>
                 <div className='mb-3'>
-                    Your Answer:- <p id="final_span">{transcript}</p>
+                    <p id="final_span">{transcript}</p>
                 </div>
                 <div>
+                    <button onClick={(e) => resetTranscript()} className='btn btn-warning'>
+                        <span>Reset This Answer</span>
+                    </button>
                     <button onClick={(e) => startButton(e)} className='btn btn-primary mx-3'>
                         <span>{listening ? "Stop" : "Start"} </span>Answering
                     </button>
-                    <button className='btn btn-success '>Next Question &gt;</button>
+                    <button className='btn btn-success ' onClick={handleNextClick()}>Next Question &gt;</button>
                 </div>
             </div>
         </div>
