@@ -57,7 +57,6 @@ const openai = new OpenAIApi(configuration);
 
 app.post("/generate-questions", async (req, res) => {
   try {
-    console.log(req.body);
     const { technology = "AI", experience = "1" } = req.body;
 
     // if (!req.file) {
@@ -131,24 +130,19 @@ app.post('/file', upload.single('file'), async (req, res) => {
 app.post("/analyze", async (req, res) => {
   try {
 
-    console.log(req.body)
-
     const System = `You are a software developer with 20 years of experience in software development. 
-    
-    You are taking interview of a candidate.
-     Now you have to generate an overall rating of the entire interview and how did the 
+    You are taking interview of a candidate and your role is to check each question with its correcponding answer
+     and provide correctness percentage of each answer.
+     You have to generate an overall rating of the entire interview and how did the 
      candidate performed in terms of deep knowledge in the respective field.
       Here's the entire conversation in a Json format.
        In the Json you can find the question asked to the candidate and his answer in natural language. 
-       After analysing the entire conversation, you will create a Json object as the analysis result. 
-       There's also an example of the analysis Json. Give me response in the Json format such as these examples.
     
     This is the entire conversation.
         '''
-      ${JSON.parse(req.body)}
+      ${req.body}
         '''
-    Now by taking and analyzing the above JSON array add two keys like communication_skill_of_the_candidate and correctness_of_the_answer with accurate percentage value and then give me the new JSON array excluding the question and answer key for each question.
-    
+      Please generate an overall performance report in json format Like this {overall_correctness: '90',communication_skill:'80',confidence_level:'60'}
         `;
 
 

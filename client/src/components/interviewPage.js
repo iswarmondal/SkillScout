@@ -64,8 +64,9 @@ const InterviewPage = () => {
             });
             resetTranscript();
             let analysisResult = await getAnalysis(updatedQuestionJson);
-            console.log(analysisResult);
+
             sessionStorage.setItem('finalJson', JSON.stringify(updatedQuestionJson));
+            sessionStorage.setItem('finalAnalysisJson', JSON.stringify(analysisResult));
             navigate('/thanks');
             setLoading(false);
         } else {
@@ -101,7 +102,7 @@ const InterviewPage = () => {
                     <button onClick={(e) => startButton(e)} className='btn btn-primary mx-3'>
                         <span>{listening ? "Stop" : "Start"} </span>Answering
                     </button>
-                    <button className='btn btn-success ' onClick={() => handleNextClick()}>Next Question &gt;</button>
+                    <button className='btn btn-success ' onClick={() => handleNextClick()}>{questionJson.length === questionIndex.current ? 'Submit' : `Next Question >`}</button>
                 </div>
             </div>
             {loading && <Loader />}

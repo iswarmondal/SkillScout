@@ -59,9 +59,7 @@ const StartPage = () => {
     const handleSubmit = async (event) => {
         setLoading(true);
         event.preventDefault()
-        console.log(formData)
         let result = await getQuestions(formData)
-        console.log(result);
         sessionStorage.setItem('questionJson', JSON.stringify(result));
         navigate('/interview')
         setLoading(false)
