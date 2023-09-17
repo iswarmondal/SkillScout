@@ -1,11 +1,20 @@
 import React from 'react';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
+import Loader from './common/loader';
+const API_URL = 'http://localhost:5000';
+var updatedQuestionJson = [];
 
 const InterviewPage = () => {
+    const [loading, setLoading] = useState(false);
+    let navigate = useNavigate();
     let questionJson = JSON.parse(sessionStorage.getItem('questionJson'));
-    let questionCount = useRef()
-    console.log(questionJson);
+
+    let questionIndex = useRef(1);
+    var filteredQuestion = questionJson.filter((eachQues) => eachQues.id === questionIndex.current);
+
+
     const {
         transcript,
         listening,
@@ -18,24 +27,66 @@ const InterviewPage = () => {
     }
 
     const startButton = (e) => {
-        // document.getElementById('mic-image').src = "./assets/mic-slash.gif";
         if (listening) {
-            SpeechRecognition.stopListening()
+            SpeechRecognition.stopListening();
+
         } else {
             SpeechRecognition.startListening({ continuous: true, language: 'en-IN' })
         }
     }
 
-    const handleNextClick = () => {
-
+    const getAnalysis = async (payload) => {
+        try {
+            let response = await fetch(`${API_URL}/analyze`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload)
+            })
+            return response.json();
+        } catch (error) {
+            console.log(error);
+        }
     }
 
+
+    const handleNextClick = async () => {
+        setLoading(true);
+        if (listening) {
+            SpeechRecognition.stopListening();
+        }
+
+        if (questionIndex.current === questionJson.length) {
+            updatedQuestionJson.push({
+                ...filteredQuestion[0],
+                answer: transcript
+            });
+            resetTranscript();
+            let analysisResult = await getAnalysis(updatedQuestionJson);
+            console.log(analysisResult);
+            sessionStorage.setItem('finalJson', JSON.stringify(updatedQuestionJson));
+            navigate('/thanks');
+            setLoading(false);
+        } else {
+            updatedQuestionJson.push({
+                ...filteredQuestion[0],
+                answer: transcript
+            })
+            questionIndex.current++;
+            resetTranscript();
+            setLoading(false);
+        }
+    }
 
     return (
         <div className='container-fluid'>
             <div className='container py-3 my-3 d-flex flex-column align-items-center justify-content-center'>
                 <div className='mb-3'>
-                    <p><b><i>Question:- </i></b><span>What is react?</span></p>
+                    <img src='./assets/skillscout-logo.jpg' alt='skillscout-logo'></img>
+                </div>
+                <div className='mb-3'>
+                    <p><b><i>Question {`${filteredQuestion[0].id}/${questionJson.length}`}:- </i></b><span>{filteredQuestion[0].question}</span></p>
                 </div>
                 <div className='mb-3'>
                     <img id='mic-image' src={listening ? "./assets/mic-animate.gif" : "./assets/mic.gif"} alt='mic-logo' />
@@ -50,9 +101,10 @@ const InterviewPage = () => {
                     <button onClick={(e) => startButton(e)} className='btn btn-primary mx-3'>
                         <span>{listening ? "Stop" : "Start"} </span>Answering
                     </button>
-                    <button className='btn btn-success ' onClick={handleNextClick()}>Next Question &gt;</button>
+                    <button className='btn btn-success ' onClick={() => handleNextClick()}>Next Question &gt;</button>
                 </div>
             </div>
+            {loading && <Loader />}
         </div>
     )
 }

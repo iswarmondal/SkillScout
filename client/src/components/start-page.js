@@ -4,28 +4,33 @@ import { useNavigate } from 'react-router-dom';
 import Loader from './common/loader';
 const API_URL = 'http://localhost:5000'
 
-const sampleData = [
-    {
-        "id": "1",
-        "question": "What is React?"
-    },
-    {
-        "id": "2",
-        "question": "What is react-dom?"
-    },
-    {
-        "id": "3",
-        "question": "Explain the concept of Virtual DOM in React."
-    },
-    {
-        "id": "4",
-        "question": "How does React handle state management?"
-    },
-    {
-        "id": "5",
-        "question": "What are components in React? How do you create a component?"
-    }
-]
+// const sampleData = [
+//     {
+//         "id": "1",
+//         "question": "What is React?",
+//         "answer": ""
+//     },
+//     {
+//         "id": "2",
+//         "question": "What is react-dom?",
+//         "answer": ""
+//     },
+//     {
+//         "id": "3",
+//         "question": "Explain the concept of Virtual DOM in React.",
+//         "answer": ""
+//     },
+//     {
+//         "id": "4",
+//         "question": "How does React handle state management?",
+//         "answer": ""
+//     },
+//     {
+//         "id": "5",
+//         "question": "What are components in React? How do you create a component?",
+//         "answer": ""
+//     }
+// ]
 
 const StartPage = () => {
     const [loading, setLoading] = useState(false);
@@ -35,45 +40,48 @@ const StartPage = () => {
     });
     let navigate = useNavigate();
 
-    const handleSubmit = async (event) => {
-        setLoading(true);
-        event.preventDefault()
-        console.log('hi', formData)
+    const getQuestions = async (payload) => {
 
         try {
             let response = await fetch(`${API_URL}/generate-questions`, {
                 method: 'POST',
-                // mode: 'no-cors',
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify(payload)
             })
-            console.log(response);
-            setLoading(false)
+            return response.json();
         } catch (error) {
             console.log(error);
-            setLoading(false);
-        } finally {
-            sessionStorage.setItem('questionJson', JSON.stringify(sampleData));
-            navigate('/interview')
         }
+    }
+
+    const handleSubmit = async (event) => {
+        setLoading(true);
+        event.preventDefault()
+        console.log(formData)
+        let result = await getQuestions(formData)
+        console.log(result);
+        sessionStorage.setItem('questionJson', JSON.stringify(result));
+        navigate('/interview')
+        setLoading(false)
     }
 
     return (
         <div className='container-fluid d-flex align-items-center justify-content-center' style={{ height: '100vh' }}>
             <div className='container d-flex align-items-center justify-content-center' style={{ width: '40vw' }}>
                 <div className='form-box' style={{ width: '100%' }} >
-                    <h1 className='mb-3 text-center'>Skill Scout</h1>
+                    <h1 className='mb-3 text-center'>
+                        <img src='./assets/skillscout-logo.jpg' alt='skill-scout-logo'></img>
+                    </h1>
                     <form className='d-flex flex-column shadow-lg p-3 rounded' style={{ backgroundColor: '#DCCCFF' }} onSubmit={(e) => handleSubmit(e)}>
                         <div className='mb-3'>
                             <label className='mb-1'>Technology<span className='text-danger'> *</span></label><br />
                             <select value={formData.technology} name='technology' className="form-select mb-3" onChange={(e) => {
                                 setFormData({
                                     ...formData,
-                                    "technology": e.target.value
-                                });
-                                console.log(e.target.value)
+                                    technology: e.target.value
+                                })
                             }} aria-label="Default select example">
                                 <option value="React.js">React.js</option>
                                 <option value="Node.js">Node.js</option>
