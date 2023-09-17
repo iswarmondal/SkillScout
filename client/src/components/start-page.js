@@ -30,8 +30,8 @@ const sampleData = [
 const StartPage = () => {
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        technology: 'React.js',
-        experience: "0"
+        "technology": "React.js",
+        "experience": "0",
     });
     let navigate = useNavigate();
 
@@ -41,13 +41,13 @@ const StartPage = () => {
         console.log('hi', formData)
 
         try {
-            let response = await fetch(`${API_URL}/generate-response`, {
+            let response = await fetch(`${API_URL}/generate-questions`, {
                 method: 'POST',
-                mode: 'no-cors',
+                // mode: 'no-cors',
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: { ...formData }
+                body: JSON.stringify(formData)
             })
             console.log(response);
             setLoading(false)
@@ -71,8 +71,9 @@ const StartPage = () => {
                             <select value={formData.technology} name='technology' className="form-select mb-3" onChange={(e) => {
                                 setFormData({
                                     ...formData,
-                                    technology: e.target.value
-                                })
+                                    "technology": e.target.value
+                                });
+                                console.log(e.target.value)
                             }} aria-label="Default select example">
                                 <option value="React.js">React.js</option>
                                 <option value="Node.js">Node.js</option>
@@ -84,7 +85,7 @@ const StartPage = () => {
                             <select value={formData.experience} name='experience' className="form-select" onChange={(e) => {
                                 setFormData({
                                     ...formData,
-                                    technology: e.target.value
+                                    "experience": e.target.value
                                 })
                             }} aria-label="Default select example">
                                 <option value="0">Fresher</option>
@@ -95,7 +96,7 @@ const StartPage = () => {
                         </div>
                         <div className='mb-3'>
                             <label className='mb-1'>Upload Resume</label>
-                            <input className="form-control form-control-lg" id="formFileLg" type="file" accept='.pdf,.docx'></input>
+                            <input className="form-control form-control-lg" id="formFileLg" type="file" accept='.pdf'></input>
                         </div>
                         <button className='btn btn-primary text-center' type='submit'>Start Interview</button>
                     </form>

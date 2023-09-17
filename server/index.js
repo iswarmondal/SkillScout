@@ -5,9 +5,14 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const convertapi = require('convertapi')("pNF9OwSHfJVIILhe");
+const cors = require('cors');
 
 const app = express();
 app.use(express.json());
+
+app.use(cors());
+
+// app.use(express.urlencoded());
 
 // Ensure the "temp_files" folder exists; create it if not
 const tempFilesFolderPath = path.join(__dirname, 'temp_files');
@@ -50,24 +55,28 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 
-app.post("/generate-questions", upload.single('file'), async (req, res) => {
+app.post("/generate-questions", async (req, res) => {
   try {
+    console.log(req.body);
     const { technology = "AI", experience = "1" } = req.body;
 
-    if (!req.file) {
-      return res.status(400).send('No file uploaded.');
-    }
-
-    const { filename } = req.file;
-    const pdfFilePath = path.join(__dirname, 'temp_files', filename);
+    // if (!req.file) {
+    //   return res.status(400).send('No file uploaded.');
+    // }
 
     const resumeText = "";
 
-    try {
-      resumeText = await extractTextFromPDF(pdfFilePath);
-    } catch (error) {
-      console.error('Error extracting text:', error);
-      res.status(500).send('Error extracting text from the file.');
+    if (req.file) {
+      const { filename } = req.file;
+      const pdfFilePath = path.join(__dirname, 'temp_files', filename);
+
+
+      try {
+        resumeText = await extractTextFromPDF(pdfFilePath);
+      } catch (error) {
+        console.error('Error extracting text:', error);
+        res.status(500).send('Error extracting text from the file.');
+      }
     }
 
     const System = `You are a software developer with 5 years of experience in ${technology}. You are taking interview of a candidate who is applying for a ${technology} developer position having ${experience} year of experience. Now you have to generate a set of ten questions based on ${technology} knowledge in Json format.
@@ -94,7 +103,7 @@ app.post("/generate-questions", upload.single('file'), async (req, res) => {
 
     const answer = completion.data.choices[0].message.content.trim();
     // res.json(answer);
-    res.send({ questionList: JSON.parse(answer), usage: completion.data.usage });
+    res.send(answer);
   } catch (error) {
     console.error("Error:", error.message);
     res.status(500).json({ error: error });
