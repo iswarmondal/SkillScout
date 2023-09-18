@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Chart from "react-apexcharts";
 
 function Analysis() {
-  const [selectedTab, setSelectedTab] = useState('text');
+  // const [selectedTab, setSelectedTab] = useState('text');
   const [data1, setData1] = useState({
     options: {
       chart: {
@@ -46,7 +46,7 @@ function Analysis() {
   return (
 
     <>
-      <div className="container-fluid">
+      {/* <div className="container-fluid">
         <div className="container py-3 my-3 d-flex flex-column align-items-center justify-content-center">
           <h1 className="mb-3">Results of the Candidate</h1>
           <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
@@ -57,8 +57,8 @@ function Analysis() {
             <label class="btn btn-outline-primary" for="btnradio2">Graph</label>
           </div>
         </div>
-      </div>
-      {selectedTab === 'graph' && <div className="d-flex flex-column justify-content-center align-items-center min-h-screen bg-black300" style={{ minHeight: '100vh' }}>
+      </div> */}
+      {/* {selectedTab === 'graph' && <div className="d-flex flex-column justify-content-center align-items-center min-h-screen bg-black300" style={{ minHeight: '100vh' }}>
 
         <br />
         <div className="d-flex flex-column justify-start items-start">
@@ -83,9 +83,11 @@ function Analysis() {
             width="300%"
           />
         </div>
-      </div>}
-      {selectedTab === 'text' && <div className="container-fluid">
+      </div>} */}
+      {/* {selectedTab === 'text' &&  */}
+      <div className="container-fluid">
         <div className="container">
+          <h1 className="text-center my-3">Results of the Candidate</h1>
           <h3>
             Overall performance
           </h3>
@@ -138,7 +140,8 @@ function Analysis() {
             })}
           </div>
         </div>
-      </div >}
+      </div >
+      {/* } */}
     </>
   );
 }
